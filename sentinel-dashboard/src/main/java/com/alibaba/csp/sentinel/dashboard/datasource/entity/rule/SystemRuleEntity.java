@@ -20,22 +20,58 @@ import com.alibaba.csp.sentinel.slots.system.SystemRule;
 import java.util.Date;
 
 /**
- * @author leyou
+ * SystemRuleEntity 表示系统规则的实体类，
+ * 用于存储和管理系统保护规则的配置信息。
+ * 实现了 RuleEntity 接口。
  */
 public class SystemRuleEntity implements RuleEntity {
 
+    /** 规则的唯一标识符 */
     private Long id;
 
+    /** 应用名称 */
     private String app;
+
+    /** 应用运行所在的机器 IP 地址 */
     private String ip;
+
+    /** 应用运行所在的机器端口号 */
     private Integer port;
+
+    /**
+     * 系统的最大负载阈值（如 CPU load 或系统平均负载）。
+     * 超过该阈值时可能会触发系统保护。
+     */
     private Double highestSystemLoad;
+
+    /**
+     * 系统允许的最大平均响应时间（毫秒）。
+     * 如果请求平均响应时间超过该值，则可能触发限流或降级。
+     */
     private Long avgRt;
+
+    /**
+     * 系统允许的最大并发线程数。
+     * 超过该值时新请求可能会被拒绝。
+     */
     private Long maxThread;
+
+    /**
+     * 系统允许的最大每秒查询数（QPS）。
+     * 用于控制系统的流量峰值。
+     */
     private Double qps;
+
+    /**
+     * 系统允许的最大 CPU 使用率。
+     * 范围通常是 0.0 - 1.0（如 0.8 表示 80%）。
+     */
     private Double highestCpuUsage;
 
+    /** 规则创建时间 */
     private Date gmtCreate;
+
+    /** 规则最近修改时间 */
     private Date gmtModified;
 
     public static SystemRuleEntity fromSystemRule(String app, String ip, Integer port, SystemRule rule) {

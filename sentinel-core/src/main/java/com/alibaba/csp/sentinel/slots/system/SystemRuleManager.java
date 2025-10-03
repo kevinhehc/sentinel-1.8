@@ -95,6 +95,7 @@ public final class SystemRuleManager {
     static {
         checkSystemStatus.set(false);
         statusListener = new SystemStatusListener();
+        // 一秒统计一次
         scheduler.scheduleAtFixedRate(statusListener, 0, 1, TimeUnit.SECONDS);
         currentProperty.addListener(listener);
     }
