@@ -90,6 +90,7 @@ public abstract class AbstractSentinelAspectSupport {
         Object[] originArgs = pjp.getArgs();
 
         // Execute fallback function if configured.
+        // 提前降级方法并调用
         Method fallbackMethod = extractFallbackMethod(pjp, fallback, fallbackClass);
         if (fallbackMethod != null) {
             // Construct args.
@@ -105,6 +106,7 @@ public abstract class AbstractSentinelAspectSupport {
             return invoke(pjp, fallbackMethod, args);
         }
         // If fallback is absent, we'll try the defaultFallback if provided.
+        // 如果降级方法没提供，那就调用默认的讲解方法
         return handleDefaultFallback(pjp, defaultFallback, fallbackClass, ex);
     }
 
