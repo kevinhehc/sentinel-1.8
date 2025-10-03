@@ -26,12 +26,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class TestServiceImpl implements TestService {
 
+    // 指定异常处理的类
     @Override
     @SentinelResource(value = "test", blockHandler = "handleException", blockHandlerClass = {ExceptionUtil.class})
     public void test() {
         System.out.println("Test");
     }
 
+    // 指定 fallback 方法
     @Override
     @SentinelResource(value = "hello", fallback = "helloFallback")
     public String hello(long s) {
@@ -41,6 +43,7 @@ public class TestServiceImpl implements TestService {
         return String.format("Hello at %d", s);
     }
 
+    // 指定默认的 fallback方法
     @Override
     @SentinelResource(value = "helloAnother", defaultFallback = "defaultFallback",
         exceptionsToIgnore = {IllegalStateException.class})
