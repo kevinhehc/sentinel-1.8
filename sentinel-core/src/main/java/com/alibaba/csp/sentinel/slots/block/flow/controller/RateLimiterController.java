@@ -57,6 +57,10 @@ public class RateLimiterController implements TrafficShapingController {
         long currentTime = TimeUtil.currentTimeMillis();
         // Calculate the interval between every two requests.
         // 计算该次请求应消耗的“时间配额”（ms）
+
+        // 当 QPS > 1000 且 acquireCount=1 时，costTimeMs 被四舍五入为 0ms —— 实际就不再等待，
+        // 导致匀速精度失真、难以稳定在 >1000 QPS 的阈值附近。对应的历史问题在社区里早有反馈。
+
         long costTime = Math.round(1.0 * (acquireCount) / count * 1000);
 
         // Expected pass time of this request.
