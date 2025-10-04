@@ -56,8 +56,11 @@ public final class RuleConstant {
     //	        • 当 入口2 调用 ServiceA 时，不受这个规则约束。
     public static final int STRATEGY_CHAIN = 2;
 
+    // 快速失败
     public static final int CONTROL_BEHAVIOR_DEFAULT = 0;
+    // 预热
     public static final int CONTROL_BEHAVIOR_WARM_UP = 1;
+    // 排队等待
     public static final int CONTROL_BEHAVIOR_RATE_LIMITER = 2;
     public static final int CONTROL_BEHAVIOR_WARM_UP_RATE_LIMITER = 3;
 
