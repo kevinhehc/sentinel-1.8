@@ -64,6 +64,7 @@ import com.alibaba.csp.sentinel.slots.block.flow.TrafficShapingController;
 public class WarmUpController implements TrafficShapingController {
 
     protected double count;
+    // 初始的qps = count / coldFactor
     private int coldFactor;
     protected int warningToken = 0;
     private int maxToken;
