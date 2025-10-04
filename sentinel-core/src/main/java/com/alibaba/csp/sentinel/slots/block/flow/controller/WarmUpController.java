@@ -80,6 +80,7 @@ public class WarmUpController implements TrafficShapingController {
         construct(count, warmUpPeriodInSec, 3);
     }
 
+    // 假设 qps是100，warnUp是10s
     private void construct(double count, int warmUpPeriodInSec, int coldFactor) {
 
         if (coldFactor <= 1) {
@@ -90,17 +91,13 @@ public class WarmUpController implements TrafficShapingController {
 
         this.coldFactor = coldFactor;
 
-        // thresholdPermits = 0.5 * warmupPeriod / stableInterval.
-        // warningToken = 100;
+        // warningToken = 500;
         warningToken = (int)(warmUpPeriodInSec * count) / (coldFactor - 1);
-        // / maxPermits = thresholdPermits + 2 * warmupPeriod /
-        // (stableInterval + coldInterval)
-        // maxToken = 200
+
+        // maxToken = 500 + 500 = 1000
         maxToken = warningToken + (int)(2 * warmUpPeriodInSec * count / (1.0 + coldFactor));
 
-        // slope
-        // slope = (coldIntervalMicros - stableIntervalMicros) / (maxPermits
-        // - thresholdPermits);
+        // slope = 2 / 100 / 500 =  0.00004
         slope = (coldFactor - 1.0) / count / (maxToken - warningToken);
 
     }
@@ -124,6 +121,7 @@ public class WarmUpController implements TrafficShapingController {
         if (restToken >= warningToken) {
             // 如果token数量在告警线之上，证明请求数比较小，按斜率放行
             long aboveToken = restToken - warningToken;
+            // double warningQps = Math.nextUp(1.0 / (aboveToken * 0.00004 + 0.01));
             double warningQps = Math.nextUp(1.0 / (aboveToken * slope + 1.0 / count));
             if (passQps + acquireCount <= warningQps) {
                 return true;
