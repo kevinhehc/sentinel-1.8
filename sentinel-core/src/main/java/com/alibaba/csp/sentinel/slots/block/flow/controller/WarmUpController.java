@@ -119,16 +119,17 @@ public class WarmUpController implements TrafficShapingController {
 
         // 开始计算它的斜率
         // 如果进入了警戒线，开始调整他的qps
+
         long restToken = storedTokens.get();
         if (restToken >= warningToken) {
+            // 如果token数量在告警线之上，证明请求数比较小，按斜率放行
             long aboveToken = restToken - warningToken;
-            // 消耗的速度要比warning快，但是要比慢
-            // current interval = restToken*slope+1/count
             double warningQps = Math.nextUp(1.0 / (aboveToken * slope + 1.0 / count));
             if (passQps + acquireCount <= warningQps) {
                 return true;
             }
         } else {
+            // 否则按最大qps放行
             if (passQps + acquireCount <= count) {
                 return true;
             }
@@ -137,6 +138,7 @@ public class WarmUpController implements TrafficShapingController {
         return false;
     }
 
+    // 保证令牌桶的token不是负数
     protected void syncToken(long passQps) {
         long currentTime = TimeUtil.currentTimeMillis();
         currentTime = currentTime - currentTime % 1000;
@@ -158,15 +160,18 @@ public class WarmUpController implements TrafficShapingController {
 
     }
 
+    // 计算令牌桶要放的token
     private long coolDownTokens(long currentTime, long passQps) {
         long oldValue = storedTokens.get();
         long newValue = oldValue;
 
-        // 添加令牌的判断前提条件:
-        // 当令牌的消耗程度远远低于警戒线的时候
         if (oldValue < warningToken) {
+            // 如果token数量在告警线之下，证明请求数比较大，全力生产token
             newValue = (long)(oldValue + (currentTime - lastFilledTime.get()) * count / 1000);
         } else if (oldValue > warningToken) {
+            // 如果token数量在告警线之上，证明请求数比较小，看情况生成token
+
+            // 如果qps在 count/coldFactor 内，还是可以全力生成token的
             if (passQps < (int)count / coldFactor) {
                 newValue = (long)(oldValue + (currentTime - lastFilledTime.get()) * count / 1000);
             }
