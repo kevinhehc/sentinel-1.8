@@ -66,6 +66,7 @@ public class TransportConfig {
      *         An empty list returned when not configured.
      */
     public static List<Endpoint> getConsoleServerList() {
+        // String config = "http://localhost:8080";
         String config = SentinelConfig.getConfig(CONSOLE_SERVER);
         List<Endpoint> list = new ArrayList<Endpoint>();
         if (StringUtil.isBlank(config)) {
